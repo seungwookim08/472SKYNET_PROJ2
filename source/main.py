@@ -96,7 +96,8 @@ def build_model():
     model_file = open("model1.txt".format(i), "w+")
     for key in sorted_keys:
         model_file.write('{}  {}  {}  {}  {}  {}\n'.format(
-               i, key, tokens[key]['ham'], smoothed_tokens[key]['ham']/total_ham, tokens[key]['ham'], smoothed_tokens[key]['spam']/total_spam ))
+               i, key, tokens[key]['ham'], smoothed_tokens[key]['ham']/total_ham, tokens[key]['spam'], smoothed_tokens[key]['spam']/total_spam ))
+        i+=1
     return tokens, tokens
 def __main__():    
     is_build = input('Do you want to build a model? (Y/N)')
