@@ -1,8 +1,9 @@
 import numpy as np
 import math, re, sys
-
 def build_model():
     tokens = dict()
+    ham_file_count = 0
+    spam_file_count = 0
     i = 1
     while True:
         print("/train/train-ham-{:05d}.txt".format(i))
@@ -16,6 +17,7 @@ def build_model():
                     else:
                         tokens[token] = {'ham': 1}
                 # print(tokenized)
+                ham_file_count+=1
         except FileNotFoundError:
             print('Build model for ham is done')
             break
@@ -31,8 +33,8 @@ def build_model():
                     else:
                         tokens[token] = {'ham': 1}
                 # print(tokenized)
+                ham_file_count += 1
         i += 1
-
     i = 1
     while True:
         print("/train/train-spam-{:05d}.txt".format(i))
@@ -47,6 +49,7 @@ def build_model():
                     else:
                         tokens[token] = {'spam': 1}
                 # print(tokenized)
+                spam_file_count+=1
         except FileNotFoundError:
             print('Build model for spam is done')
             break
@@ -63,10 +66,9 @@ def build_model():
                     else:
                         tokens[token] = {'spam': 1}
                 # print(tokenized)
+                spam_file_count += 1
         i += 1
     
-
-
     # To have a deep copy for smoothed token, we need both original frequency and smoothed probability
     smoothed_tokens = dict()
     for key, value in tokens.items():
@@ -97,12 +99,92 @@ def build_model():
     for key in sorted_keys:
         model_file.write('{}  {}  {}  {}  {}  {}\n'.format(
                i, key, tokens[key]['ham'], smoothed_tokens[key]['ham']/total_ham, tokens[key]['spam'], smoothed_tokens[key]['spam']/total_spam ))
-        i+=1
-    return tokens, tokens
-def __main__():    
+        i=i+1
+    return tokens, tokens, ham_file_count, spam_file_count
+def __main__():
     is_build = input('Do you want to build a model? (Y/N)')
     if is_build.lower() == 'y':
-        a, b = build_model()
-    # print(a, b)
+        a, b, ham_file_count, spam_file_count = build_model()
+    # print(ham_file_count, spam_file_count)
+    # 1000 997
+    file = open("model1.txt")
 if __name__ == "__main__":
     __main__()
+def Classifer(ham_file_count, spam_file_count,file):
+    score_ham=0
+    score_spam=0
+    nb=dict()
+    # compute prior
+    prior_ham = ham_file_count/(ham_file_count+spam_file_count)
+    prior_spam = spam_file_count/(ham_file_count+spam_file_count)
+    # find conditional probability for each word in file and build a dictionary
+    lines = file.readlines()
+    for line in lines:
+        words = line.split("  ")
+        nb[words[1]] = [words[3], words[5]]
+    i = 1
+    while True:
+        print("/test/test-ham-{:05d}.txt".format(i))
+        try:
+            with open(".\\test\\test-ham-{:05d}.txt".format(i)) as test_file:
+                txt = test_file.read().lower()
+                tokenized = re.split('[^a-zA-Z]',txt)
+                for token in tokenized:
+                    if token in nb:
+                        list = nb[token]
+                        # p (w|ham)
+                        list[1]
+                    else:
+                        tokens[token] = {'ham': 1}
+                # print(tokenized)
+                ham_file_count+=1
+        except FileNotFoundError:
+            print('Build model for ham is done')
+            break
+        except UnicodeDecodeError:
+            # utf-8 code can't decode, then try with byte code
+            with open(".\\train\\train-ham-{:05d}.txt".format(i), 'rb') as test_file:
+                txt = test_file.read()
+                txt = txt.decode('ISO-8859-1').lower()
+                tokenized = re.split('[^a-zA-Z]',txt)
+                for token in tokenized:
+                    if token in tokens:
+                        tokens[token]['ham'] += 1
+                    else:
+                        tokens[token] = {'ham': 1}
+                # print(tokenized)
+                ham_file_count += 1
+        i += 1
+    i = 1
+    while True:
+        print("/test/test-spam-{:05d}.txt".format(i))
+        try:
+            with open(".\\test\\test-spam-{:05d}.txt".format(i)) as test_file:
+                txt = test_file.read().lower()
+                tokenized = re.split('[^a-zA-Z]', txt)
+                for token in tokenized:
+                    if token in tokens:
+                        if len(tokens[token]) > 1:
+                            tokens[token]['spam'] += 1
+                    else:
+                        tokens[token] = {'spam': 1}
+                # print(tokenized)
+                spam_file_count += 1
+        except FileNotFoundError:
+            print('Build model for spam is done')
+            break
+        except UnicodeDecodeError:
+            # utf-8 code can't decode, then try with byte code
+            with open(".\\train\\train-spam-{:05d}.txt".format(i), 'rb') as test_file:
+                txt = test_file.read()
+                txt = txt.decode('ISO-8859-1').lower()
+                tokenized = re.split('[^a-zA-Z]', txt)
+                for token in tokenized:
+                    if token in tokens:
+                        if len(tokens[token]) > 1:
+                            tokens[token]['spam'] += 1
+                    else:
+                        tokens[token] = {'spam': 1}
+                # print(tokenized)
+                spam_file_count += 1
+        i += 1
