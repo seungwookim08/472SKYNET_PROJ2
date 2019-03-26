@@ -1,5 +1,5 @@
 import numpy as np
-import math, re, sys, matplotlib
+import math, re, sys
 
 def build_model():
     tokens = list()
@@ -7,14 +7,14 @@ def build_model():
     while True:
         print("/train/train-ham-{:05d}.txt".format(i))
         try:
-            with open("/train/train-ham-{:05d}.txt".format(i),'r') as test_file:
+            with open("./train/train-ham-{:05d}.txt".format(i),'r') as test_file:
                 txt = test_file.read()
                 tokenized = re.split('\[\^a-zA-Z\]',txt)
                 print(tokenized)
         except FileNotFoundError:
             print('Build model for ham is done')
             break
-    i += 1
+        i += 1
 
 def __main__():
     is_build = input('Do you want to build a model? (Y/N)')
