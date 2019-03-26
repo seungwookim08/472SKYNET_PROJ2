@@ -6,7 +6,7 @@ def build_model():
     spam_file_count = 0
     i = 1
     while True:
-        print("/train/train-ham-{:05d}.txt".format(i))
+        # print("/train/train-ham-{:05d}.txt".format(i))
         try:
             with open(".\\train\\train-ham-{:05d}.txt".format(i)) as test_file:
                 txt = test_file.read().lower()
@@ -37,7 +37,7 @@ def build_model():
         i += 1
     i = 1
     while True:
-        print("/train/train-spam-{:05d}.txt".format(i))
+        # print("/train/train-spam-{:05d}.txt".format(i))
         try:
             with open(".\\train\\train-spam-{:05d}.txt".format(i)) as test_file:
                 txt = test_file.read().lower()
@@ -101,16 +101,7 @@ def build_model():
                i, key, tokens[key]['ham'], smoothed_tokens[key]['ham']/total_ham, tokens[key]['spam'], smoothed_tokens[key]['spam']/total_spam ))
         i=i+1
     return tokens, tokens, ham_file_count, spam_file_count
-def __main__():
-    is_build = input('Do you want to build a model? (Y/N)')
-    if is_build.lower() == 'y':
-        a, b, ham_file_count, spam_file_count = build_model()
-        print(ham_file_count, spam_file_count)
-        # 1000 997
-        file = open("model1.txt")
 
-if __name__ == "__main__":
-    __main__()
 def Classifer(ham_file_count, spam_file_count,file):
     line_counter = 1
     nb=dict()
@@ -134,8 +125,8 @@ def Classifer(ham_file_count, spam_file_count,file):
                     if token in nb:
                         list = nb[token]
                         # p (w|ham): list[1]
-                        score_ham = score_ham + math.log10(list[0])
-                        score_spam = score_spam + math.log10(list[1])
+                        score_ham = score_ham + math.log10(float(list[0]))
+                        score_spam = score_spam + math.log10(float(list[1]))
                     else:
                         # if the word did not appear in test set, make it 0 for now
                         score_ham = score_ham + 0
@@ -147,9 +138,9 @@ def Classifer(ham_file_count, spam_file_count,file):
                     print(line_counter,"test-ham-{:05d}.txt".format(i),"spam",score_ham,score_spam,"ham","wrong")
                 else:
                     print(line_counter, "test-ham-{:05d}.txt".format(i), "ham", score_ham, score_spam, "ham", "right")
-
+                line_counter += 1
         except FileNotFoundError:
-            print('test is done')
+            print('test for ham class is done')
             break
         except UnicodeDecodeError:
             # utf-8 code can't decode, then try with byte code
@@ -163,8 +154,8 @@ def Classifer(ham_file_count, spam_file_count,file):
                     if token in nb:
                         list = nb[token]
                         # p (w|ham): list[1]
-                        score_ham = score_ham + math.log10(list[0])
-                        score_spam = score_spam + math.log10(list[1])
+                        score_ham = score_ham + math.log10(float(list[0]))
+                        score_spam = score_spam + math.log10(float(list[1]))
                     else:
                         # if the word did not appear in test set, make it 0 for now
                         score_ham = score_ham + 0
@@ -176,6 +167,7 @@ def Classifer(ham_file_count, spam_file_count,file):
                     print(line_counter,"test-ham-{:05d}.txt".format(i),"spam",score_ham,score_spam,"ham","wrong")
                 else:
                     print(line_counter, "test-ham-{:05d}.txt".format(i), "ham", score_ham, score_spam, "ham", "right")
+                line_counter += 1
         i += 1
 
     i = 1
@@ -190,8 +182,8 @@ def Classifer(ham_file_count, spam_file_count,file):
                     if token in nb:
                         list = nb[token]
                         # p (w|ham): list[1]
-                        score_ham = score_ham + math.log10(list[0])
-                        score_spam = score_spam + math.log10(list[1])
+                        score_ham = score_ham + math.log10(float(list[0]))
+                        score_spam = score_spam + math.log10(float(list[1]))
                     else:
                         # if the word did not appear in test set, make it 0 for now
                         score_ham = score_ham + 0
@@ -203,8 +195,9 @@ def Classifer(ham_file_count, spam_file_count,file):
                     print(line_counter,"test-ham-{:05d}.txt".format(i),"spam",score_ham,score_spam,"spam","right")
                 else:
                     print(line_counter, "test-ham-{:05d}.txt".format(i), "ham", score_ham, score_spam, "spam", "wrong")
+                line_counter += 1
         except FileNotFoundError:
-            print('test is done')
+            print('test for spam class is done')
             break
         except UnicodeDecodeError:
             # utf-8 code can't decode, then try with byte code
@@ -216,8 +209,8 @@ def Classifer(ham_file_count, spam_file_count,file):
                     if token in nb:
                         list = nb[token]
                         # p (w|ham): list[1]
-                        score_ham = score_ham + math.log10(list[0])
-                        score_spam = score_spam + math.log10(list[1])
+                        score_ham = score_ham + math.log10(float(list[0]))
+                        score_spam = score_spam + math.log10(float(list[1]))
                     else:
                         # if the word did not appear in test set, make it 0 for now
                         score_ham = score_ham + 0
@@ -229,6 +222,18 @@ def Classifer(ham_file_count, spam_file_count,file):
                     print(line_counter,"test-ham-{:05d}.txt".format(i),"spam",score_ham,score_spam,"spam","right")
                 else:
                     print(line_counter, "test-ham-{:05d}.txt".format(i), "ham", score_ham, score_spam, "spam", "wrong")
-
+                line_counter += 1
         i += 1
 # change
+
+def __main__():
+    is_build = input('Do you want to build a model? (Y/N)')
+    if is_build.lower() == 'y':
+        a, b, ham_file_count, spam_file_count = build_model()
+        print(ham_file_count, spam_file_count)
+        # 1000 997
+        file = open("model1.txt")
+        Classifer(ham_file_count, spam_file_count,file)
+
+if __name__ == "__main__":
+    __main__()
