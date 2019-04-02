@@ -8,7 +8,7 @@ def get_tocken_count(label):
     while True:
         # print("/train/train-{}-{:05d}.txt".format(label, i))
         try:
-            with open(".\\train\\train-{}-{:05d}.txt".format(label, i)) as test_file:
+            with open(".\\train\\train-{}-{:05d}.txt".format(label, i), encoding='latin-1') as test_file:
                 txt = test_file.read().lower()
                 tokenized = re.split('[^a-zA-Z]', txt)
                 for token in tokenized:
@@ -21,19 +21,6 @@ def get_tocken_count(label):
         except FileNotFoundError:
             print('Build model for {} is done'.format(label))
             break
-        except UnicodeDecodeError:
-            # utf-8 code can't decode, then try with byte code
-            with open(".\\train\\train-{}-{:05d}.txt".format(label, i), 'rb') as test_file:
-                txt = test_file.read()
-                txt = txt.decode('ISO-8859-1').lower()
-                tokenized = re.split('[^a-zA-Z]', txt)
-                for token in tokenized:
-                    if token in tokens:
-                        tokens[token] += 1
-                    else:
-                        tokens[token] = 1
-                # print(tokenized)
-                file_count += 1
         i += 1
     # remove dummy count
     del tokens['']
@@ -91,7 +78,7 @@ def NB_Classifer(ham_file_count, spam_file_count,file):
         try:
             score_ham = 0
             score_spam = 0
-            with open(".\\test\\test-ham-{:05d}.txt".format(i)) as test_file:
+            with open(".\\test\\test-ham-{:05d}.txt".format(i), encoding='latin-1') as test_file:
                 txt = test_file.read().lower()
                 tokenized = re.split('[^a-zA-Z]',txt)
                 for token in tokenized:
@@ -121,38 +108,6 @@ def NB_Classifer(ham_file_count, spam_file_count,file):
         except FileNotFoundError:
             print('test for ham class is done')
             break
-        except UnicodeDecodeError:
-            # utf-8 code can't decode, then try with byte code
-            score_ham = 0
-            score_spam = 0
-            with open(".\\train\\train-ham-{:05d}.txt".format(i), 'rb') as test_file:
-                txt = test_file.read()
-                txt = txt.decode('ISO-8859-1').lower()
-                tokenized = re.split('[^a-zA-Z]',txt)
-                for token in tokenized:
-                    if token in nb:
-                        list = nb[token]
-                        # p (w|ham): list[1]
-                        score_ham = score_ham + math.log10(float(list[0]))
-                        score_spam = score_spam + math.log10(float(list[1]))
-                    else:
-                        # if the word did not appear in test set, make it 0 for now
-                        score_ham = score_ham + 0
-                        score_spam = score_spam + 0
-                # add prior
-                score_ham = score_ham + math.log10(prior_ham)
-                score_spam = score_spam + math.log10(prior_spam)
-                if score_spam >= score_ham:
-                    outputstring=line_counter,"test-ham-{:05d}.txt".format(i),"spam",score_ham,score_spam,"ham","wrong"
-                    output_list.append(outputstring)
-                    # print(outputstring)
-                    wrong_count += 1
-                else:
-                    outputstring=line_counter, "test-ham-{:05d}.txt".format(i), "ham", score_ham, score_spam, "ham", "right"
-                    output_list.append(outputstring)
-                    # print(outputstring)
-                    right_count += 1
-                line_counter += 1
         i += 1
     print('accuracy for ham ', right_count / (right_count + wrong_count))
 
@@ -163,7 +118,7 @@ def NB_Classifer(ham_file_count, spam_file_count,file):
         try:
             score_ham = 0
             score_spam = 0
-            with open(".\\test\\test-spam-{:05d}.txt".format(i)) as test_file:
+            with open(".\\test\\test-spam-{:05d}.txt".format(i), encoding='latin-1') as test_file:
                 txt = test_file.read().lower()
                 tokenized = re.split('[^a-zA-Z]',txt)
                 for token in tokenized:
@@ -193,36 +148,6 @@ def NB_Classifer(ham_file_count, spam_file_count,file):
         except FileNotFoundError:
             print('test for spam class is done')
             break
-        except UnicodeDecodeError:
-            # utf-8 code can't decode, then try with byte code
-            with open(".\\train\\train-spam-{:05d}.txt".format(i), 'rb') as test_file:
-                txt = test_file.read()
-                txt = txt.decode('ISO-8859-1').lower()
-                tokenized = re.split('[^a-zA-Z]', txt)
-                for token in tokenized:
-                    if token in nb:
-                        list = nb[token]
-                        # p (w|ham): list[1]
-                        score_ham = score_ham + math.log10(float(list[0]))
-                        score_spam = score_spam + math.log10(float(list[1]))
-                    else:
-                        # if the word did not appear in test set, make it 0 for now
-                        score_ham = score_ham + 0
-                        score_spam = score_spam + 0
-                # add prior
-                score_ham = score_ham + math.log10(prior_ham)
-                score_spam = score_spam + math.log10(prior_spam)
-                if score_spam > score_ham:
-                    outputstring=line_counter,"test-spam-{:05d}.txt".format(i),"spam",score_ham,score_spam,"spam","right"
-                    output_list.append(outputstring)
-                    # print(outputstring)
-                    right_count += 1
-                else:
-                    outputstring=line_counter, "test-spam-{:05d}.txt".format(i), "ham", score_ham, score_spam, "spam", "wrong"
-                    output_list.append(outputstring)
-                    # print(outputstring)
-                    wrong_count += 1
-                line_counter += 1
         i += 1
     print('accuracy for spam ', right_count/(right_count+wrong_count))
 
