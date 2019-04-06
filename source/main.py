@@ -128,7 +128,7 @@ def output_results(classifications, output_file, class_under_test):
         judgement = "wrong"
         if classification == class_under_test:
             judgement = "right"
-        output_file.write("{}  test-{}-{:05d}.txt  {}  {}  {}  {}  {}\n".format(output_line_counter, class_under_test, classification_index, classification, score_ham, score_spam, class_under_test, judgement))
+        output_file.write("{}  test-{}-{:05d}.txt  {}  {}  {}  {}  {}\n".format(output_line_counter, class_under_test, classification_index + 1, classification, score_ham, score_spam, class_under_test, judgement))
         output_line_counter += 1
 
 
