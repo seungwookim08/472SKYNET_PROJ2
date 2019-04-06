@@ -1,7 +1,10 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 import re
 import sys
+
+# time library is imported but it is not to use for building algorithm and just for our report
 import time
 
 
@@ -121,12 +124,12 @@ def load_model(model_filename):
 
 
 def output_results(classifications, output_file, class_under_test):
-    global output_line_counter
+    output_line_counter = 1
     for classification_index, (classification, score_spam, score_ham) in enumerate(classifications):
         judgement = "wrong"
         if classification == class_under_test:
             judgement = "right"
-        output_file.write("{}  test-{}-{:05d}.txt  {}  {}  {}  {}  {}\n".format(output_line_counter, class_under_test, classification_index, classification, score_ham, score_spam, class_under_test, judgement))
+        output_file.write("{}  test-{}-{:05d}.txt  {}  {}  {}  {}  {}\n".format(output_line_counter, class_under_test, classification_index + 1, classification, score_ham, score_spam, class_under_test, judgement))
         output_line_counter += 1
 
 
@@ -140,14 +143,68 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
 
     hamtest_classifications, hamtest_wrong_count, hamtest_right_count = classify_set(prior_ham, prior_spam, "ham", nb)
     output_results(hamtest_classifications, output_file, "ham")
-    print('accuracy for ham ', hamtest_right_count / (hamtest_right_count + hamtest_wrong_count))
+    print("test set file count: ham right: "+str(hamtest_right_count)+" ham wrong:"+str(hamtest_wrong_count)+" total ham: "+str(hamtest_right_count + hamtest_wrong_count))
 
     spamtest_classifications, spamtest_right_count, spamtest_wrong_count = classify_set(prior_ham, prior_spam, "spam", nb)
     output_results(spamtest_classifications, output_file, "spam")
-    print('accuracy for spam ', spamtest_right_count / (spamtest_right_count + spamtest_wrong_count))
+    print("test set file count: spam right: "+str(spamtest_right_count)+" spam wrong:"+str(spamtest_wrong_count)+" total spam: "+str(spamtest_right_count + spamtest_wrong_count))
+
+    print("total accuracy: (" + str(spamtest_right_count)+" + "+str(hamtest_right_count)+")/("+str(hamtest_right_count + hamtest_wrong_count)+" + "+str(spamtest_right_count + spamtest_wrong_count)+")= "+str((spamtest_right_count+hamtest_right_count)/(hamtest_right_count + hamtest_wrong_count+spamtest_right_count + spamtest_wrong_count)))
+    b = 1
+
+    print("\n\nHAM Statistics")
+    accuracy_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
+    print('accuracy(ham): ' + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(hamtest_wrong_count) + ") = " + str(accuracy_ham))
+    precision_ham = hamtest_right_count / (hamtest_right_count + spamtest_wrong_count)
+    print("precision(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(spamtest_wrong_count) + ")= " + str(precision_ham))
+    recall_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
+    print("recall(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(hamtest_wrong_count) + ")= " + str(recall_ham))
+    f_measure_ham = (b * b + 1) * precision_ham * recall_ham / (b * b * precision_ham + recall_ham)
+    print("f_measure_ham: " + str(f_measure_ham))
+
+    print("\n\nSPAM Statistics")
+    accuracy_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
+    print('accuracy(ham): ' + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ") = " + str(accuracy_spam))
+    precision_spam = spamtest_right_count / (spamtest_right_count + hamtest_wrong_count)
+    print("precision(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(hamtest_wrong_count) + ") = " + str(precision_spam))
+    recall_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
+    print("recall(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ") = " + str(recall_spam))
+    f_measure_spam = (b * b + 1) * precision_spam * recall_spam / (b * b * precision_spam + recall_spam)
+    print("f_measure_spam: " + str(f_measure_spam))
+
+    confusion_matrix = np.array([[hamtest_right_count, hamtest_wrong_count], [spamtest_wrong_count, spamtest_right_count]])
+    fig, ax = plt.subplots()
+    im = ax.imshow(confusion_matrix, cmap="Reds")
+    ax.set_xticks(np.arange(2))
+    ax.set_yticks(np.arange(2))
+    ax.set_xticklabels(["HAM", "SPAM"])
+    ax.set_yticklabels(["HAM", "SPAM"])
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    for j in range(0, 2):
+        for i in range(0, 2):
+            plt.text(j, i, '{}'.format(confusion_matrix[i, j]), ha='center', va='center',
+                     bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'))
+    plt.title("Confusion Matrix for {}".format(model_filename))
+    plt.xlabel("Classified As")
+    plt.ylabel("Real Class")
+    plt.show()
+    print(confusion_matrix)
 
 
 def __main__():
+    baseline_name, baseline_result = "baseline-model.txt", "baseline-result.txt"
+    stopword_name, stopword_result = "stopword-model.txt", "stopword-result.txt"
+    wordlength_name, wordlength_result = "wordlength-model.txt", "wordlength-result.txt"
+
+    custom_model = input("Do you want to use custom model? If no, original trainning / test set will be run  (Y/N)")
+    if custom_model.lower() == 'y':
+        baseline_name = input("Please enter baseline experiment model name: ")
+        baseline_result = input("Please enter baseline experiment result name: ")
+        stopword_name = input("Please enter stop-word experiment model name: ")
+        stopword_result = input("Please enter baseline experiment result name: ")
+        wordlength_name = input("Please enter word-length experiment model name: ")
+        wordlength_result = input("Please enter baseline experiment result name: ")
+
     num_runs = 1
     baseline_total_time = 0
     baseline_build_time = 0
@@ -171,12 +228,14 @@ def __main__():
 
         print("\nStarting baseline tests")
         start_time = time.time()*1000
-        ham_file_count, spam_file_count = build_model("baseline-model.txt")
+        ham_file_count, spam_file_count = build_model(baseline_name)
         build_end = time.time() * 1000
+        # file in training set
+        print("training set: ham: "+str(ham_file_count) +" spam: "+ str(spam_file_count))
         # print("Model build computation time: %fms" % (build_end-start_time))
         baseline_build_time = baseline_build_time + (build_end-start_time)
 
-        NB_Classifer(ham_file_count, spam_file_count, "baseline-model.txt", "baseline-result.txt")
+        NB_Classifer(ham_file_count, spam_file_count, baseline_name, baseline_result)
         end_time = time.time()*1000
         # print("Classification computation time: %fms" % (end_time-build_end))
         baseline_class_time = baseline_class_time + (end_time-build_end)
@@ -188,12 +247,12 @@ def __main__():
 
         print("\nStarting stopword tests")
         start_time = time.time()*1000
-        ham_file_count, spam_file_count = build_model("stopword-model.txt", stopword_filter=True)
+        ham_file_count, spam_file_count = build_model(stopword_name, stopword_filter=True)
         build_end = time.time() * 1000
         #print("Model build computation time: %fms" % (build_end-start_time))
         stopword_build_time = stopword_build_time + (build_end-start_time)
 
-        NB_Classifer(ham_file_count, spam_file_count, "stopword-model.txt", "stopword-result.txt")
+        NB_Classifer(ham_file_count, spam_file_count, stopword_name, stopword_result)
         end_time = time.time()*1000
         #print("Classification computation time: %fms" % (end_time-build_end))
         stopword_class_time = stopword_class_time + (end_time-build_end)
@@ -204,12 +263,12 @@ def __main__():
 
         print("\nStarting wordlength tests")
         start_time = time.time()*1000
-        ham_file_count, spam_file_count = build_model("wordlength-model.txt", length_filter=True)
+        ham_file_count, spam_file_count = build_model(wordlength_name, length_filter=True)
         build_end = time.time() * 1000
         #print("Model build computation time: %fms" % (build_end-start_time))
         wordlength_build_time = wordlength_build_time + (build_end-start_time)
 
-        NB_Classifer(ham_file_count, spam_file_count, "wordlength-model.txt", "wordlength-result.txt")
+        NB_Classifer(ham_file_count, spam_file_count, wordlength_name, wordlength_result)
         end_time = time.time()*1000
         #print("Classification computation time: %fms" % (end_time-build_end))
         wordlength_class_time = wordlength_class_time + (end_time-build_end)
@@ -218,20 +277,20 @@ def __main__():
         wordlength_total_time = wordlength_total_time + (end_time-start_time)
 
 
-        print("\nStarting hybrid tests")
-        start_time = time.time()*1000
-        ham_file_count, spam_file_count = build_model("hybrid-model.txt", stopword_filter=True, length_filter=True)
-        build_end = time.time() * 1000
-        #print("Model build computation time: %fms" % (build_end-start_time))
-        hybrid_build_time = hybrid_build_time + (build_end-start_time)
+        # print("\nStarting hybrid tests")
+        # start_time = time.time()*1000
+        # ham_file_count, spam_file_count = build_model("hybrid-model.txt", stopword_filter=True, length_filter=True)
+        # build_end = time.time() * 1000
+        # #print("Model build computation time: %fms" % (build_end-start_time))
+        # hybrid_build_time = hybrid_build_time + (build_end-start_time)
 
-        NB_Classifer(ham_file_count, spam_file_count, "hybrid-model.txt", "hybrid-result.txt")
-        end_time = time.time()*1000
-        #print("Classification computation time: %fms" % (end_time-build_end))
-        hybrid_class_time = hybrid_class_time + (end_time-build_end)
+        # NB_Classifer(ham_file_count, spam_file_count, "hybrid-model.txt", "hybrid-result.txt")
+        # end_time = time.time()*1000
+        # #print("Classification computation time: %fms" % (end_time-build_end))
+        # hybrid_class_time = hybrid_class_time + (end_time-build_end)
 
-        #print("Total computation time: %fms\n" % (end_time-start_time))
-        hybrid_total_time = hybrid_total_time + (end_time-start_time)
+        # #print("Total computation time: %fms\n" % (end_time-start_time))
+        # hybrid_total_time = hybrid_total_time + (end_time-start_time)
 
     print("\nBaseline:")
     print("Total time: %f" % (baseline_total_time/num_runs))
