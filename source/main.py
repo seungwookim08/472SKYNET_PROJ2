@@ -169,7 +169,7 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
     f_measure_ham=(b*b+1)* percision_ham * recall_ham /(b*b*percision_ham + recall_ham)
     print("f_measure_ham: "+str(f_measure_ham))
     f_measure_spam = (b * b + 1) * percision_spam * recall_spam / (b * b * percision_spam + recall_spam)
-    print("f_measure_ham: " + str(f_measure_spam))
+    print("f_measure_spam: " + str(f_measure_spam))
 
 def __main__():
     baseline_name, baseline_result = "baseline-model.txt", "baseline-result.txt"
