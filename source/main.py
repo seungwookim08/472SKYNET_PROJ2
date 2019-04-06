@@ -8,11 +8,11 @@ import time
 output_line_counter = 1
 max_filter_length = 9
 min_filter_length = 2
+stopwords = open("English-Stop-Words.txt", "r", encoding="latin-1").read().splitlines()
 
 
 def get_token_count(label, length_filter, stopword_filter):
-    global max_filter_length, min_filter_length
-    stopwords = open("English-Stop-Words.txt", "r").readlines()
+    global max_filter_length, min_filter_length, stopwords
     tokens = dict()
     file_count = 0
     i = 1
@@ -23,11 +23,11 @@ def get_token_count(label, length_filter, stopword_filter):
                 txt = test_file.read().lower()
                 tokenized = list(filter(None, re.split('[^a-zA-Z]', txt)))
 
-                if stopword_filter:
-                    tokenized = [token for token in tokenized if token not in stopwords]
-
                 if length_filter:
                     tokenized = [token for token in tokenized if min_filter_length < len(token) < max_filter_length]
+
+                if stopword_filter:
+                    tokenized = [token for token in tokenized if token not in stopwords]
 
                 for token in tokenized:
                     if token in tokens:
@@ -167,7 +167,9 @@ def __main__():
 
     for i in range(0, num_runs):
 
-        print("Starting baseline tests")
+        print("\nStarting iteration #%d" % i)
+
+        print("\nStarting baseline tests")
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model("baseline-model.txt")
         build_end = time.time() * 1000
@@ -184,7 +186,7 @@ def __main__():
 
 
 
-        print("Starting stopword tests")
+        print("\nStarting stopword tests")
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model("stopword-model.txt", stopword_filter=True)
         build_end = time.time() * 1000
@@ -200,7 +202,7 @@ def __main__():
         stopword_total_time = stopword_total_time + (end_time-start_time)
 
 
-        print("Starting wordlength tests")
+        print("\nStarting wordlength tests")
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model("wordlength-model.txt", length_filter=True)
         build_end = time.time() * 1000
@@ -216,7 +218,7 @@ def __main__():
         wordlength_total_time = wordlength_total_time + (end_time-start_time)
 
 
-        print("Starting hybrid tests")
+        print("\nStarting hybrid tests")
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model("hybrid-model.txt", stopword_filter=True, length_filter=True)
         build_end = time.time() * 1000
