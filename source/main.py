@@ -145,11 +145,12 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
     hamtest_classifications, hamtest_wrong_count, hamtest_right_count = classify_set(prior_ham, prior_spam, "ham", nb)
     output_results(hamtest_classifications, output_file, "ham")
     print('accuracy for ham ', hamtest_right_count / (hamtest_right_count + hamtest_wrong_count))
+    print("test set file count: ham right: "+str(hamtest_right_count)+" ham wrong:"+str(hamtest_wrong_count)+" total ham: "+str(hamtest_right_count + hamtest_wrong_count))
 
     spamtest_classifications, spamtest_right_count, spamtest_wrong_count = classify_set(prior_ham, prior_spam, "spam", nb)
     output_results(spamtest_classifications, output_file, "spam")
     print('accuracy for spam ', spamtest_right_count / (spamtest_right_count + spamtest_wrong_count))
-
+    print("test set file count: spam right: "+str(spamtest_right_count)+" spam wrong:"+str(spamtest_wrong_count)+" total spam: "+str(spamtest_right_count + spamtest_wrong_count))
 
 def __main__():
     baseline_name, baseline_result = "baseline-model.txt", "baseline-result.txt"
@@ -188,6 +189,8 @@ def __main__():
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model(baseline_name)
         build_end = time.time() * 1000
+        # file in training set
+        print("training set: ham: "+str(ham_file_count) +" spam: "+ str(spam_file_count))
         # print("Model build computation time: %fms" % (build_end-start_time))
         baseline_build_time = baseline_build_time + (build_end-start_time)
 
