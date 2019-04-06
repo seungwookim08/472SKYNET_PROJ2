@@ -15,8 +15,6 @@ min_filter_length = 2
 def get_token_count(label, length_filter, stopword_filter):
     global max_filter_length, min_filter_length
     stopwords = open("English-Stop-Words.txt", "r").read().splitlines()
-    if stopword_filter:
-        print(stopwords)
     tokens = dict()
     file_count = 0
     i = 1
