@@ -147,10 +147,29 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
     print('accuracy for ham ', hamtest_right_count / (hamtest_right_count + hamtest_wrong_count))
     print("test set file count: ham right: "+str(hamtest_right_count)+" ham wrong:"+str(hamtest_wrong_count)+" total ham: "+str(hamtest_right_count + hamtest_wrong_count))
 
+
     spamtest_classifications, spamtest_right_count, spamtest_wrong_count = classify_set(prior_ham, prior_spam, "spam", nb)
     output_results(spamtest_classifications, output_file, "spam")
     print('accuracy for spam ', spamtest_right_count / (spamtest_right_count + spamtest_wrong_count))
     print("test set file count: spam right: "+str(spamtest_right_count)+" spam wrong:"+str(spamtest_wrong_count)+" total spam: "+str(spamtest_right_count + spamtest_wrong_count))
+
+    print("total accuracy: ("+ str(spamtest_right_count)+" + "+str(hamtest_right_count)+")/("+str(hamtest_right_count + hamtest_wrong_count)+" + "+str(spamtest_right_count + spamtest_wrong_count)+")= "+str((spamtest_right_count+hamtest_right_count)/(hamtest_right_count + hamtest_wrong_count+spamtest_right_count + spamtest_wrong_count)))
+
+    percision_ham = hamtest_right_count/(hamtest_right_count + spamtest_wrong_count)
+    print("percision(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(spamtest_wrong_count)+")= "+str(percision_ham))
+    percision_spam = spamtest_right_count / (spamtest_right_count + hamtest_wrong_count)
+    print("percision(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(hamtest_wrong_count) + ")= " + str(percision_spam))
+
+    recall_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
+    print("recall(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(hamtest_wrong_count) + ")= " + str(recall_ham))
+    recall_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
+    print("recall(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ")= " + str(recall_spam))
+
+    b=1
+    f_measure_ham=(b*b+1)* percision_ham * recall_ham /(b*b*percision_ham + recall_ham)
+    print("f_measure_ham: "+str(f_measure_ham))
+    f_measure_spam = (b * b + 1) * percision_spam * recall_spam / (b * b * percision_spam + recall_spam)
+    print("f_measure_ham: " + str(f_measure_spam))
 
 def __main__():
     baseline_name, baseline_result = "baseline-model.txt", "baseline-result.txt"
