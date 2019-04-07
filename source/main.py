@@ -187,12 +187,11 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
     plt.title("Confusion Matrix for {}".format(model_filename))
     plt.xlabel("Classified As")
     plt.ylabel("Real Class")
-    plt.show()
     print(confusion_matrix)
 
 
 def __main__():
-    baseline_name, baseline_result = "baseline-model.txt", "baseline-result.txt"
+    baseline_name, baseline_result = "model.txt", "baseline-result.txt"
     stopword_name, stopword_result = "stopword-model.txt", "stopword-result.txt"
     wordlength_name, wordlength_result = "wordlength-model.txt", "wordlength-result.txt"
 
@@ -311,6 +310,7 @@ def __main__():
     print("Total time: %f" % (hybrid_total_time/num_runs))
     print("Buld time: %f" % (hybrid_build_time/num_runs))
     print("Classification time: %f" % (hybrid_class_time/num_runs))
+    plt.show()
 
     total_times = (baseline_total_time/num_runs, stopword_total_time/num_runs, wordlength_total_time/num_runs, hybrid_total_time/num_runs)
     build_times = (baseline_build_time/num_runs, stopword_build_time/num_runs, wordlength_build_time/num_runs, hybrid_build_time/num_runs)
