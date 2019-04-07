@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 import re
 import sys
@@ -10,11 +11,11 @@ import time
 output_line_counter = 1
 max_filter_length = 9
 min_filter_length = 2
+stopwords = open("English-Stop-Words.txt", "r", encoding="latin-1").read().splitlines()
 
 
 def get_token_count(label, length_filter, stopword_filter):
-    global max_filter_length, min_filter_length
-    stopwords = open("English-Stop-Words.txt", "r").read().splitlines()
+    global max_filter_length, min_filter_length, stopwords
     tokens = dict()
     file_count = 0
     i = 1
@@ -29,11 +30,11 @@ def get_token_count(label, length_filter, stopword_filter):
                 txt = test_file.read().lower()
                 tokenized = list(filter(None, re.split('[^a-zA-Z]', txt)))
 
-                if stopword_filter:
-                    tokenized = [token for token in tokenized if token not in stopwords]
-
                 if length_filter:
                     tokenized = [token for token in tokenized if min_filter_length < len(token) < max_filter_length]
+
+                if stopword_filter:
+                    tokenized = [token for token in tokenized if token not in stopwords]
 
                 for token in tokenized:
                     if token in tokens:
@@ -192,32 +193,53 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
 
     hamtest_classifications, hamtest_wrong_count, hamtest_right_count = classify_set(prior_ham, prior_spam, "ham", nb)
     output_results(hamtest_classifications, output_file, "ham")
-    print('accuracy for ham ', hamtest_right_count / (hamtest_right_count + hamtest_wrong_count))
     print("test set file count: ham right: "+str(hamtest_right_count)+" ham wrong:"+str(hamtest_wrong_count)+" total ham: "+str(hamtest_right_count + hamtest_wrong_count))
-
 
     spamtest_classifications, spamtest_right_count, spamtest_wrong_count = classify_set(prior_ham, prior_spam, "spam", nb)
     output_results(spamtest_classifications, output_file, "spam")
-    print('accuracy for spam ', spamtest_right_count / (spamtest_right_count + spamtest_wrong_count))
     print("test set file count: spam right: "+str(spamtest_right_count)+" spam wrong:"+str(spamtest_wrong_count)+" total spam: "+str(spamtest_right_count + spamtest_wrong_count))
 
-    print("total accuracy: ("+ str(spamtest_right_count)+" + "+str(hamtest_right_count)+")/("+str(hamtest_right_count + hamtest_wrong_count)+" + "+str(spamtest_right_count + spamtest_wrong_count)+")= "+str((spamtest_right_count+hamtest_right_count)/(hamtest_right_count + hamtest_wrong_count+spamtest_right_count + spamtest_wrong_count)))
+    print("total accuracy: (" + str(spamtest_right_count)+" + "+str(hamtest_right_count)+")/("+str(hamtest_right_count + hamtest_wrong_count)+" + "+str(spamtest_right_count + spamtest_wrong_count)+")= "+str((spamtest_right_count+hamtest_right_count)/(hamtest_right_count + hamtest_wrong_count+spamtest_right_count + spamtest_wrong_count)))
+    b = 1
 
-    percision_ham = hamtest_right_count/(hamtest_right_count + spamtest_wrong_count)
-    print("percision(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(spamtest_wrong_count)+")= "+str(percision_ham))
-    percision_spam = spamtest_right_count / (spamtest_right_count + hamtest_wrong_count)
-    print("percision(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(hamtest_wrong_count) + ")= " + str(percision_spam))
-
+    print("\n\nHAM Statistics")
+    accuracy_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
+    print('accuracy(ham): ' + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(hamtest_wrong_count) + ") = " + str(accuracy_ham))
+    precision_ham = hamtest_right_count / (hamtest_right_count + spamtest_wrong_count)
+    print("precision(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(spamtest_wrong_count) + ")= " + str(precision_ham))
     recall_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
     print("recall(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(hamtest_wrong_count) + ")= " + str(recall_ham))
-    recall_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
-    print("recall(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ")= " + str(recall_spam))
+    f_measure_ham = (b * b + 1) * precision_ham * recall_ham / (b * b * precision_ham + recall_ham)
+    print("f_measure_ham: " + str(f_measure_ham))
 
-    b=1
-    f_measure_ham=(b*b+1)* percision_ham * recall_ham /(b*b*percision_ham + recall_ham)
-    print("f_measure_ham: "+str(f_measure_ham))
-    f_measure_spam = (b * b + 1) * percision_spam * recall_spam / (b * b * percision_spam + recall_spam)
+    print("\n\nSPAM Statistics")
+    accuracy_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
+    print('accuracy(ham): ' + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ") = " + str(accuracy_spam))
+    precision_spam = spamtest_right_count / (spamtest_right_count + hamtest_wrong_count)
+    print("precision(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(hamtest_wrong_count) + ") = " + str(precision_spam))
+    recall_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
+    print("recall(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ") = " + str(recall_spam))
+    f_measure_spam = (b * b + 1) * precision_spam * recall_spam / (b * b * precision_spam + recall_spam)
     print("f_measure_spam: " + str(f_measure_spam))
+
+    confusion_matrix = np.array([[hamtest_right_count, hamtest_wrong_count], [spamtest_wrong_count, spamtest_right_count]])
+    fig, ax = plt.subplots()
+    im = ax.imshow(confusion_matrix, cmap="Reds")
+    ax.set_xticks(np.arange(2))
+    ax.set_yticks(np.arange(2))
+    ax.set_xticklabels(["HAM", "SPAM"])
+    ax.set_yticklabels(["HAM", "SPAM"])
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    for j in range(0, 2):
+        for i in range(0, 2):
+            plt.text(j, i, '{}'.format(confusion_matrix[i, j]), ha='center', va='center',
+                     bbox=dict(boxstyle='round', facecolor='white', edgecolor='0.3'))
+    plt.title("Confusion Matrix for {}".format(model_filename))
+    plt.xlabel("Classified As")
+    plt.ylabel("Real Class")
+    plt.show()
+    print(confusion_matrix)
+
 
 def __main__():
     baseline_name, baseline_result = "baseline-model.txt", "baseline-result.txt"
@@ -252,7 +274,9 @@ def __main__():
 
     for i in range(0, num_runs):
 
-        print("Starting baseline tests")
+        print("\nStarting iteration #%d" % i)
+
+        print("\nStarting baseline tests")
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model(baseline_name)
         build_end = time.time() * 1000
@@ -271,7 +295,7 @@ def __main__():
 
 
 
-        print("Starting stopword tests")
+        print("\nStarting stopword tests")
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model(stopword_name, stopword_filter=True)
         build_end = time.time() * 1000
@@ -287,7 +311,7 @@ def __main__():
         stopword_total_time = stopword_total_time + (end_time-start_time)
 
 
-        print("Starting wordlength tests")
+        print("\nStarting wordlength tests")
         start_time = time.time()*1000
         ham_file_count, spam_file_count = build_model(wordlength_name, length_filter=True)
         build_end = time.time() * 1000
@@ -303,7 +327,7 @@ def __main__():
         wordlength_total_time = wordlength_total_time + (end_time-start_time)
 
 
-        # print("Starting hybrid tests")
+        # print("\nStarting hybrid tests")
         # start_time = time.time()*1000
         # ham_file_count, spam_file_count = build_model("hybrid-model.txt", stopword_filter=True, length_filter=True)
         # build_end = time.time() * 1000
