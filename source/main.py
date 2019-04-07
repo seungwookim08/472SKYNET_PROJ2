@@ -22,11 +22,7 @@ def get_token_count(label, length_filter, stopword_filter):
     while True:
         # print("/train/train-{}-{:05d}.txt".format(label, i))
         try:
-<<<<<<< HEAD
             with open(".\\train\\train-{}-{:05d}.txt".format(label, i), encoding="latin-1") as test_file:
-=======
-            with open(".\\train\\train-{}-{:05d}.txt".format(label, i), encoding='latin-1') as test_file:
->>>>>>> master
                 txt = test_file.read().lower()
                 tokenized = list(filter(None, re.split('[^a-zA-Z]', txt)))
 
@@ -90,11 +86,7 @@ def classify_set(prior_ham, prior_spam, fileset, nb):
             classification = ""
             score_ham = 0
             score_spam = 0
-<<<<<<< HEAD
             with open(".\\test\\test-{}-{:05d}.txt".format(fileset, i), encoding="latin-1") as test_file:
-=======
-            with open(".\\test\\test-ham-{:05d}.txt".format(i), encoding='latin-1') as test_file:
->>>>>>> master
                 txt = test_file.read().lower()
                 tokenized = re.split('[^a-zA-Z]', txt)
                 for token in tokenized:
@@ -120,48 +112,6 @@ def classify_set(prior_ham, prior_spam, fileset, nb):
         i += 1
     return classifications, spam_count, ham_count
 
-<<<<<<< HEAD
-=======
-    i = 1
-    right_count = 0
-    wrong_count = 0
-    while True:
-        try:
-            score_ham = 0
-            score_spam = 0
-            with open(".\\test\\test-spam-{:05d}.txt".format(i), encoding='latin-1') as test_file:
-                txt = test_file.read().lower()
-                tokenized = re.split('[^a-zA-Z]',txt)
-                for token in tokenized:
-                    if token in nb:
-                        list = nb[token]
-                        # p (w|ham): list[1]
-                        score_ham = score_ham + math.log10(float(list[0]))
-                        score_spam = score_spam + math.log10(float(list[1]))
-                    else:
-                        # if the word did not appear in test set, make it 0 for now
-                        score_ham = score_ham + 0
-                        score_spam = score_spam + 0
-                # add prior
-                score_ham = score_ham + math.log10(prior_ham)
-                score_spam = score_spam + math.log10(prior_spam)
-                if score_spam > score_ham:
-                    outputstring=line_counter,"test-spam-{:05d}.txt".format(i),"spam",score_ham,score_spam,"spam","right"
-                    output_list.append(outputstring)
-                    # print(outputstring)
-                    right_count += 1
-                else:
-                    outputstring=line_counter, "test-spam-{:05d}.txt".format(i), "ham", score_ham, score_spam, "spam", "wrong"
-                    output_list.append(outputstring)
-                    # print(outputstring)
-                    wrong_count += 1
-                line_counter += 1
-        except FileNotFoundError:
-            print('test for spam class is done')
-            break
-        i += 1
-    print('accuracy for spam ', right_count/(right_count+wrong_count))
->>>>>>> master
 
 def load_model(model_filename):
     model_file = open(model_filename)
