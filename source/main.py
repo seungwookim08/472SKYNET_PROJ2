@@ -153,8 +153,8 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
     b = 1
 
     print("\n\nHAM Statistics")
-    accuracy_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
-    print('accuracy(ham): ' + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(hamtest_wrong_count) + ") = " + str(accuracy_ham))
+    #accuracy_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
+    #print('accuracy(ham): ' + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(hamtest_wrong_count) + ") = " + str(accuracy_ham))
     precision_ham = hamtest_right_count / (hamtest_right_count + spamtest_wrong_count)
     print("precision(ham): " + str(hamtest_right_count) + "/(" + str(hamtest_right_count) + "+" + str(spamtest_wrong_count) + ")= " + str(precision_ham))
     recall_ham = hamtest_right_count / (hamtest_right_count + hamtest_wrong_count)
@@ -163,8 +163,8 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
     print("f_measure_ham: " + str(f_measure_ham))
 
     print("\n\nSPAM Statistics")
-    accuracy_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
-    print('accuracy(ham): ' + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ") = " + str(accuracy_spam))
+    #accuracy_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
+    #print('accuracy(ham): ' + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(spamtest_wrong_count) + ") = " + str(accuracy_spam))
     precision_spam = spamtest_right_count / (spamtest_right_count + hamtest_wrong_count)
     print("precision(spam): " + str(spamtest_right_count) + "/(" + str(spamtest_right_count) + "+" + str(hamtest_wrong_count) + ") = " + str(precision_spam))
     recall_spam = spamtest_right_count / (spamtest_right_count + spamtest_wrong_count)
@@ -310,7 +310,6 @@ def __main__():
     print("Total time: %f" % (hybrid_total_time/num_runs))
     print("Buld time: %f" % (hybrid_build_time/num_runs))
     print("Classification time: %f" % (hybrid_class_time/num_runs))
-    plt.show()
 
     total_times = (baseline_total_time/num_runs, stopword_total_time/num_runs, wordlength_total_time/num_runs, hybrid_total_time/num_runs)
     build_times = (baseline_build_time/num_runs, stopword_build_time/num_runs, wordlength_build_time/num_runs, hybrid_build_time/num_runs)
