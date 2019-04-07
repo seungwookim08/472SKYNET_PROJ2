@@ -187,7 +187,6 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
     plt.title("Confusion Matrix for {}".format(model_filename))
     plt.xlabel("Classified As")
     plt.ylabel("Real Class")
-    plt.show()
     print(confusion_matrix)
 
 
@@ -311,6 +310,7 @@ def __main__():
     print("Total time: %f" % (hybrid_total_time/num_runs))
     print("Buld time: %f" % (hybrid_build_time/num_runs))
     print("Classification time: %f" % (hybrid_class_time/num_runs))
+    plt.show()
 
 
 if __name__ == "__main__":
