@@ -191,7 +191,7 @@ def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filenam
 
 
 def __main__():
-    baseline_name, baseline_result = "baseline-model.txt", "baseline-result.txt"
+    baseline_name, baseline_result = "model.txt", "baseline-result.txt"
     stopword_name, stopword_result = "stopword-model.txt", "stopword-result.txt"
     wordlength_name, wordlength_result = "wordlength-model.txt", "wordlength-result.txt"
 
