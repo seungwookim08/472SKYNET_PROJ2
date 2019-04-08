@@ -124,7 +124,7 @@ def load_model(model_filename):
 
 
 def output_results(classifications, output_file, class_under_test):
-    output_line_counter = 1
+    global output_line_counter
     for classification_index, (classification, score_spam, score_ham) in enumerate(classifications):
         judgement = "wrong"
         if classification == class_under_test:
@@ -136,6 +136,8 @@ def output_results(classifications, output_file, class_under_test):
 def NB_Classifer(ham_file_count, spam_file_count, model_filename, output_filename):
     nb = load_model(model_filename)
     output_file = open(output_filename, "w+")
+    global output_line_counter
+    output_line_counter = 1
 
     # compute priors
     prior_ham = ham_file_count/(ham_file_count+spam_file_count)
