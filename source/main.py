@@ -278,20 +278,20 @@ def __main__():
         wordlength_total_time = wordlength_total_time + (end_time-start_time)
 
 
-        # print("\nStarting hybrid tests")
-        # start_time = time.time()*1000
-        # ham_file_count, spam_file_count = build_model("hybrid-model.txt", stopword_filter=True, length_filter=True)
-        # build_end = time.time() * 1000
-        # #print("Model build computation time: %fms" % (build_end-start_time))
-        # hybrid_build_time = hybrid_build_time + (build_end-start_time)
+        print("\nStarting hybrid tests")
+        start_time = time.time()*1000
+        ham_file_count, spam_file_count = build_model("hybrid-model.txt", stopword_filter=True, length_filter=True)
+        build_end = time.time() * 1000
+        #print("Model build computation time: %fms" % (build_end-start_time))
+        hybrid_build_time = hybrid_build_time + (build_end-start_time)
 
-        # NB_Classifer(ham_file_count, spam_file_count, "hybrid-model.txt", "hybrid-result.txt")
-        # end_time = time.time()*1000
-        # #print("Classification computation time: %fms" % (end_time-build_end))
-        # hybrid_class_time = hybrid_class_time + (end_time-build_end)
+        NB_Classifer(ham_file_count, spam_file_count, "hybrid-model.txt", "hybrid-result.txt")
+        end_time = time.time()*1000
+        #print("Classification computation time: %fms" % (end_time-build_end))
+        hybrid_class_time = hybrid_class_time + (end_time-build_end)
 
-        # #print("Total computation time: %fms\n" % (end_time-start_time))
-        # hybrid_total_time = hybrid_total_time + (end_time-start_time)
+        #print("Total computation time: %fms\n" % (end_time-start_time))
+        hybrid_total_time = hybrid_total_time + (end_time-start_time)
 
     print("\nBaseline:")
     print("Total time: %f" % (baseline_total_time/num_runs))
@@ -308,10 +308,10 @@ def __main__():
     print("Buld time: %f" % (wordlength_build_time/num_runs))
     print("Classification time: %f" % (wordlength_class_time/num_runs))
 
-    # print("\nHybrid:")
-    # print("Total time: %f" % (hybrid_total_time/num_runs))
-    # print("Buld time: %f" % (hybrid_build_time/num_runs))
-    # print("Classification time: %f" % (hybrid_class_time/num_runs))
+    print("\nHybrid:")
+    print("Total time: %f" % (hybrid_total_time/num_runs))
+    print("Buld time: %f" % (hybrid_build_time/num_runs))
+    print("Classification time: %f" % (hybrid_class_time/num_runs))
 
     total_times = (baseline_total_time/num_runs, stopword_total_time/num_runs, wordlength_total_time/num_runs, hybrid_total_time/num_runs)
     build_times = (baseline_build_time/num_runs, stopword_build_time/num_runs, wordlength_build_time/num_runs, hybrid_build_time/num_runs)
@@ -327,9 +327,24 @@ def __main__():
 
     ax.set_title("Computation Times")
     ax.set_xticks(ind + 0.25 / 2)
-    ax.set_xticklabels(("Baseline", "Stopword", "Wordlength"))
-    # ax.set_xticklabels(("Baseline", "Stopword", "Wordlength", "Hybrid"))
+    # ax.set_xticklabels(("Baseline", "Stopword", "Wordlength"))
+    ax.set_xticklabels(("Baseline", "Stopword", "Wordlength", "Hybrid"))
     ax.legend((total_bars[0], build_bars[0], class_bars[0]), ("Total", "Build", "Classification"))
+
+    # num_models = 4
+    # ind = np.arange(num_models)
+    # fig, ax = plt.subplots()
+    # ax.set_xticks(np.arange(4))
+    # ax.set_title("Comparing Results")
+
+    # ax.set_xticklabels(["Baseline", "Stop-word", "Word-length", "Hybrid"])
+    # plt.plot([0.9125*100,0.91375*100,0.92*100,0.91625*100])
+    # plt.plot([0.91841*100,0.91949*100,0.92471*100,0.92090*100])
+    # plt.plot([0.90566*100,0.90713*100,0.91467*100,0.91102*100])
+    # plt.ylabel("Accurancy (in %)")
+    # plt.legend(('Total Accurancy(Precision)', 'Ham (F-1 Measurement)', 'Spam (F-1 Measurement)'), loc='lower right')
+    # plt.legend(('Ham (F-1 Measurement)', 'Spam (F-1 Measurement)'), loc='lower right')
+
     plt.show()
 
 
